@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>مختبر بايثون — أكاديمية أقدام</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0F172A;
+    --ink2:#151E33;
+    --surf:#1E293B;
+    --surf-line:#2A3651;
+    --term:#11141C;
+    --blue:#2563EB;
+    --blue-soft:#3B82F6;
+    --gold:#F59E0B;
+    --violet:#7C3AED;
+    --teal:#14B8A6;
+    --red:#EF4444;
+    --text:#E7ECF7;
+    --muted:#8C99B8;
+    --muted2:#5C6B8A;
+    --good:#22C55E;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(900px 600px at 88% -10%, rgba(124,58,237,.16), transparent 60%),
+      radial-gradient(800px 500px at -10% 110%, rgba(37,99,235,.14), transparent 60%),
+      var(--ink);
+    color:var(--text);
+    font-family:'Cairo',sans-serif;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:28px 20px 60px;}
+
+  /* ---------- header ---------- */
+  header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:28px;flex-wrap:wrap;}
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand .mark{
+    width:46px;height:46px;border-radius:13px;
+    background:linear-gradient(145deg, var(--blue), var(--violet));
+    display:flex;align-items:center;justify-content:center;
+    font-family:'JetBrains Mono',monospace;font-weight:700;font-size:20px;color:#fff;
+    box-shadow:0 6px 18px rgba(37,99,235,.35);
+    flex-shrink:0;
+  }
+  .brand .name{font-weight:800;font-size:18px;letter-spacing:.2px;}
+  .brand .sub{font-size:12px;color:var(--muted);margin-top:1px;}
+  .pill{
+    display:inline-flex;align-items:center;gap:7px;
+    background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.35);
+    color:var(--gold);font-size:12.5px;font-weight:700;
+    padding:7px 14px;border-radius:999px;
+  }
+  .pill .dot{width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 3px rgba(245,158,11,.18);}
+
+  /* ---------- hero ---------- */
+  .hero{margin-bottom:30px;}
+  .hero h1{
+    font-size:clamp(28px,4.4vw,44px);font-weight:900;line-height:1.25;margin:0 0 10px;
+    background:linear-gradient(95deg,#fff 35%, #BFD3FF 65%, #C9B3FF 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .hero p{color:var(--muted);font-size:15.5px;max-width:700px;line-height:1.85;margin:0;}
+  .hero .accent{color:var(--gold);-webkit-text-fill-color:var(--gold);}
+
+  /* ---------- layout ---------- */
+  .grid{display:grid;grid-template-columns:1.35fr 1fr;gap:22px;align-items:start;}
+  @media (max-width:880px){ .grid{grid-template-columns:1fr;} }
+
+  .panel{
+    background:var(--surf);
+    border:1px solid var(--surf-line);
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 18px 40px -20px rgba(0,0,0,.55);
+  }
+  .panel-head{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 18px;border-bottom:1px solid var(--surf-line);
+  }
+  .panel-head .title{display:flex;align-items:center;gap:10px;font-weight:700;font-size:14.5px;}
+  .panel-head .title .ico{
+    width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+    font-size:13px;
+  }
+
+  /* code editor */
+  .dots{display:flex;gap:7px;}
+  .dots span{width:10px;height:10px;border-radius:50%;display:inline-block;}
+  .dots .r{background:#FF5F56;} .dots .y{background:#FFBD2E;} .dots .g{background:#27C93F;}
+
+  .code-area{position:relative;background:var(--term);}
+  #codeInput{
+    width:100%;min-height:300px;
+    background:transparent;color:#D7DEF0;
+    border:none;outline:none;resize:vertical;
+    font-family:'JetBrains Mono',monospace;
+    font-size:14.5px;line-height:1.65;
+    padding:18px 18px 18px 18px;
+    direction:ltr;text-align:left;
+    tab-size:4;
+    caret-color:var(--gold);
+  }
+  #codeInput::placeholder{color:#4B5673;}
+
+  .toolbar{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    padding:14px 18px;background:var(--ink2);border-top:1px solid var(--surf-line);
+  }
+  .btn{
+    border:none;border-radius:11px;font-family:'Cairo',sans-serif;font-weight:700;font-size:14.5px;
+    padding:12px 22px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;
+    transition:transform .12s ease, filter .12s ease;
+  }
+  .btn:active{transform:scale(.97);}
+  .btn-run{
+    background:linear-gradient(135deg, var(--good), #16A34A);color:#fff;
+    box-shadow:0 8px 20px -6px rgba(34,197,94,.55);
+  }
+  .btn-run:hover{filter:brightness(1.07);}
+  .btn-run[disabled]{opacity:.55;cursor:wait;}
+  .btn-clear{background:var(--surf-line);color:var(--text);}
+  .btn-clear:hover{filter:brightness(1.15);}
+  .btn-sample{background:rgba(124,58,237,.16);color:#C7B4FB;border:1px solid rgba(124,58,237,.4);}
+  .btn-sample:hover{filter:brightness(1.12);}
+  .toolbar .spacer{flex:1;}
+  .status{font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:7px;}
+  .status .led{width:8px;height:8px;border-radius:50%;background:var(--muted2);}
+  .status.ok .led{background:var(--good);box-shadow:0 0 0 3px rgba(34,197,94,.18);}
+  .status.busy .led{background:var(--gold);box-shadow:0 0 0 3px rgba(245,158,11,.18);}
+
+  /* output */
+  .output-area{
+    background:var(--term);min-height:230px;max-height:380px;overflow:auto;
+    padding:16px 18px;font-family:'JetBrains Mono',monospace;font-size:13.5px;line-height:1.7;
+    direction:ltr;text-align:left;white-space:pre-wrap;word-break:break-word;
+  }
+  .out-placeholder{color:#4B5673;font-family:'Cairo',sans-serif;font-size:13.5px;text-align:center;
+    padding:50px 10px;direction:rtl;}
+  .out-line{margin:0;}
+  .out-ok{color:#9ECE6A;}
+  .out-err{color:#FF6E6E;}
+  .out-input-row{display:flex;gap:8px;align-items:center;margin-top:6px;}
+  .out-input-row input{
+    flex:1;background:#1B2030;border:1px solid var(--surf-line);border-radius:7px;
+    color:#fff;font-family:'JetBrains Mono',monospace;font-size:13px;padding:7px 10px;outline:none;
+  }
+  .out-input-row button{
+    background:var(--blue);color:#fff;border:none;border-radius:7px;padding:7px 14px;
+    font-family:'Cairo',sans-serif;font-weight:700;font-size:12.5px;cursor:pointer;
+  }
+
+  /* sidebar */
+  .side-card{padding:20px;}
+  .side-card h3{margin:0 0 4px;font-size:15px;font-weight:800;}
+  .side-card .desc{color:var(--muted);font-size:12.5px;line-height:1.7;margin:0 0 16px;}
+
+  .qr-box{
+    background:#fff;border-radius:14px;padding:14px;display:flex;align-items:center;justify-content:center;
+    margin-bottom:14px;
+  }
+  .qr-box img{width:100%;max-width:190px;display:block;border-radius:4px;}
+  .link-row{
+    display:flex;align-items:center;gap:8px;background:var(--ink2);border:1px solid var(--surf-line);
+    border-radius:10px;padding:9px 12px;margin-bottom:18px;
+  }
+  .link-row code{
+    flex:1;direction:ltr;text-align:left;font-family:'JetBrains Mono',monospace;font-size:11.5px;
+    color:var(--blue-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .copy-btn{
+    background:var(--surf-line);border:none;color:var(--text);border-radius:7px;padding:6px 10px;
+    font-size:11px;cursor:pointer;font-family:'Cairo',sans-serif;font-weight:700;flex-shrink:0;
+  }
+  .copy-btn.copied{background:var(--good);color:#fff;}
+
+  /* examples: tabs + card grid */
+  .examples-panel{margin-bottom:18px;}
+  .tabs{
+    display:flex;gap:6px;padding:12px 14px 0;overflow-x:auto;scrollbar-width:none;
+  }
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab-btn{
+    flex-shrink:0;background:transparent;border:none;color:var(--muted);
+    font-family:'Cairo',sans-serif;font-weight:700;font-size:13.5px;
+    padding:10px 16px;border-radius:10px 10px 0 0;cursor:pointer;
+    border-bottom:2px solid transparent;transition:color .15s ease, background .15s ease;
+  }
+  .tab-btn:hover{color:var(--text);}
+  .tab-btn.active{
+    color:var(--gold);background:rgba(245,158,11,.08);
+    border-bottom:2px solid var(--gold);
+  }
+  .tab-panels{padding:16px 16px 18px;}
+  .ex-grid{
+    display:grid;grid-template-columns:repeat(2,1fr);gap:10px;
+  }
+  @media (max-width:560px){ .ex-grid{grid-template-columns:1fr;} }
+  .ex-card{
+    text-align:right;background:var(--ink2);border:1px solid var(--surf-line);border-radius:12px;
+    padding:13px 14px;color:var(--text);font-family:'Cairo',sans-serif;cursor:pointer;
+    display:flex;flex-direction:column;gap:5px;transition:border-color .15s ease, background .15s ease;
+  }
+  .ex-card:hover{border-color:var(--blue);background:rgba(37,99,235,.08);}
+  .ex-card .ex-title{font-size:13.5px;font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .ex-card .ex-tag{
+    font-size:10px;font-weight:600;color:var(--violet);direction:ltr;text-align:left;
+    background:rgba(124,58,237,.14);border-radius:6px;padding:2px 7px;flex-shrink:0;
+  }
+  .ex-card .ex-desc{font-size:11.5px;color:var(--muted);line-height:1.6;}
+
+  .divider{height:1px;background:var(--surf-line);margin:18px 0;}
+
+  .tip{
+    display:flex;gap:10px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);
+    border-radius:12px;padding:12px 14px;font-size:12px;color:#F3D9A6;line-height:1.7;
+  }
+  .tip b{color:var(--gold);}
+
+  footer{
+    margin-top:40px;text-align:center;color:var(--muted2);font-size:12.5px;
+    padding-top:22px;border-top:1px solid var(--surf-line);
+  }
+  footer .by{color:var(--muted);font-weight:700;}
+  footer .acad{color:var(--gold);font-weight:800;}
+
+  /* loading dots animation */
+  .loading-dots span{animation:blink 1.4s infinite both;}
+  .loading-dots span:nth-child(2){animation-delay:.2s;}
+  .loading-dots span:nth-child(3){animation-delay:.4s;}
+  @keyframes blink{0%,80%,100%{opacity:.25;}40%{opacity:1;}}
+
+  @media (prefers-reduced-motion: reduce){
+    .loading-dots span{animation:none;}
+    .btn{transition:none;}
+  }
+
+  @media (max-width:520px){
+    .panel-head .title span.label{display:none;}
+    #codeInput{font-size:13.5px;}
+    .hero h1{font-size:26px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand">
+      <div class="mark">&gt;_</div>
+      <div>
+        <div class="name">مختبر بايثون</div>
+        <div class="sub">تجربة كود مباشرة من المتصفّح</div>
+      </div>
+    </div>
+    <div class="pill"><span class="dot"></span> يعمل بلا تثبيت — مباشرة من المتصفح</div>
+  </header>
+
+  <div class="hero">
+    <h1>اكتب <span class="accent">سطرًا</span>.. وشاهد بايثون ينفّذه فورًا</h1>
+    <p>امسح الباركود من جهازك، اكتب كودك في المربع، واضغط «شغّل الكود» — ستظهر النتيجة مباشرة في نفس الصفحة. لا حاجة لتثبيت أي برنامج.</p>
+  </div>
+
+  <!-- EXAMPLES TABS -->
+  <div class="panel examples-panel">
+    <div class="panel-head">
+      <div class="title"><span style="font-size:15px;">🧪</span><span>أمثلة جاهزة</span></div>
+      <div class="title"><span style="color:var(--muted);font-size:12px;">اضغط مثالًا ليُملأ المحرّر تلقائيًا</span></div>
+    </div>
+    <div class="tabs" id="exTabs">
+      <button class="tab-btn active" data-cat="basics">الأساسيات</button>
+      <button class="tab-btn" data-cat="control">التحكّم</button>
+      <button class="tab-btn" data-cat="functions">الدوال</button>
+      <button class="tab-btn" data-cat="projects">مشاريع صغيرة</button>
+    </div>
+    <div class="tab-panels" id="exPanels"><!-- filled by JS --></div>
+  </div>
+
+  <div class="grid">
+    <!-- LEFT: editor + output -->
+    <div>
+      <div class="panel">
+        <div class="panel-head">
+          <div class="title">
+            <span class="dots"><span class="r"></span><span class="y"></span><span class="g"></span></span>
+            <span class="label" style="color:var(--muted);font-family:'JetBrains Mono',monospace;font-weight:500;">main.py</span>
+          </div>
+          <div class="title"><span style="color:var(--muted);font-size:12px;">Python 3</span></div>
+        </div>
+        <div class="code-area">
+          <textarea id="codeInput" spellcheck="false" placeholder="اكتب كود بايثون هنا...
+مثال:
+
+print(&quot;مرحبًا بالعالم&quot;)"></textarea>
+        </div>
+        <div class="toolbar">
+          <button class="btn btn-run" id="runBtn">▶ شغّل الكود</button>
+          <button class="btn btn-clear" id="clearBtn">مسح</button>
+          <div class="spacer"></div>
+          <div class="status" id="statusBox"><span class="led"></span><span id="statusText">جاهز</span></div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:18px;">
+        <div class="panel-head">
+          <div class="title">
+            <span style="width:8px;height:8px;border-radius:50%;background:var(--good);display:inline-block;"></span>
+            <span>مكان الاستجابة</span>
+          </div>
+          <div class="title"><span style="color:var(--muted);font-size:12px;">الناتج</span></div>
+        </div>
+        <div class="output-area" id="output">
+          <div class="out-placeholder">ستظهر نتيجة الكود هنا بعد الضغط على «شغّل الكود» ⬆</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: sidebar -->
+    <div>
+      <div class="panel side-card">
+        <h3>📱 افتح المختبر من جوالك</h3>
+        <p class="desc">امسح الرمز بكاميرا الجوال للدخول مباشرة لهذه الصفحة على متصفح هاتفك.</p>
+        <div class="qr-box"><img id="qrImg" alt="رمز QR لفتح الصفحة"></div>
+        <div class="link-row">
+          <code id="pageUrl">…</code>
+          <button class="copy-btn" id="copyBtn">نسخ</button>
+        </div>
+
+        <div class="divider"></div>
+        <div class="tip"><span>💡</span><span><b>تنويه:</b> أوامر <code style="direction:ltr;display:inline-block">input()</code> مدعومة — سيظهر مربع إدخال أسفل الناتج عند تشغيل كود يطلب إدخالًا من المستخدم.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    إعداد: <span class="by">هلال القصابي</span> &nbsp;|&nbsp; <span class="acad">أكاديمية أقدام</span>
+  </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+<script>
+  // ---------- QR + URL ----------
+  function currentUrl(){ return window.location.href.split('#')[0]; }
+  function renderQR(){
+    const url = currentUrl();
+    document.getElementById('pageUrl').textContent = url;
+    const qrApi = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=8&data=" + encodeURIComponent(url);
+    document.getElementById('qrImg').src = qrApi;
+  }
+  renderQR();
+
+  document.getElementById('copyBtn').addEventListener('click', async () => {
+    try{
+      await navigator.clipboard.writeText(currentUrl());
+      const b = document.getElementById('copyBtn');
+      b.textContent = '✓ تم النسخ'; b.classList.add('copied');
+      setTimeout(()=>{ b.textContent='نسخ'; b.classList.remove('copied'); }, 1800);
+    }catch(e){}
+  });
+
+  // ---------- examples (grouped by category for tabs) ----------
+  const EXAMPLES = {
+    basics: [
+      { id:"hello", title:"مرحبًا بالعالم", tag:"print()", desc:"أول جملة تطبعها بايثون على الشاشة.",
+        code:`# أول برنامج لك\nprint("مرحبًا بالعالم")\nprint("أنا أتعلّم بايثون!")` },
+      { id:"vars", title:"متغيّرات وأعمار", tag:"متغيّرات", desc:"تخزين نص وعدد في متغيّرات وطباعتها.",
+        code:`name = "سارة"\nage = 16\n\nprint("الاسم:", name)\nprint("العمر:", age)` },
+      { id:"types", title:"أنواع البيانات", tag:"type()", desc:"التعرّف على نوع كل قيمة في بايثون.",
+        code:`text = "عمان"\nnumber = 16\ndecimal = 3.14\nflag = True\n\nprint(type(text))\nprint(type(number))\nprint(type(decimal))\nprint(type(flag))` },
+      { id:"input1", title:"اسأل المستخدم", tag:"input()", desc:"قراءة اسم من المستخدم والترحيب به.",
+        code:`name = input("ما اسمك؟ ")\nprint("أهلًا وسهلًا", name)` },
+      { id:"calc", title:"حاسبة بسيطة", tag:"عمليات", desc:"جمع رقمين يُدخلهما المستخدم.",
+        code:`a = int(input("الرقم الأول: "))\nb = int(input("الرقم الثاني: "))\n\nprint("الناتج:", a + b)` },
+      { id:"fstring", title:"تنسيق النصوص", tag:"f-string", desc:"دمج نص ومتغيّرات بطريقة أنيقة.",
+        code:`name = "خالد"\nscore = 92\n\nprint(f"الطالب {name} حصل على {score} من 100")` },
+    ],
+    control: [
+      { id:"cond", title:"ناجح أم راسب؟", tag:"if / else", desc:"اتخاذ قرار حسب قيمة الدرجة.",
+        code:`score = 85\n\nif score >= 50:\n    print("ناجح ✓")\nelse:\n    print("راسب")` },
+      { id:"grade", title:"تقدير الدرجة", tag:"elif", desc:"تصنيف الدرجة إلى عدّة مستويات.",
+        code:`score = 78\n\nif score >= 90:\n    print("ممتاز")\nelif score >= 75:\n    print("جيد جدًا")\nelif score >= 50:\n    print("مقبول")\nelse:\n    print("ضعيف")` },
+      { id:"loop", title:"تكرار الطباعة", tag:"for", desc:"تنفيذ أمر الطباعة عدّة مرّات تلقائيًا.",
+        code:`for i in range(1, 6):\n    print("التكرار رقم:", i)` },
+      { id:"while", title:"العدّ التنازلي", tag:"while", desc:"تكرار يستمر ما دام الشرط صحيحًا.",
+        code:`count = 5\n\nwhile count > 0:\n    print(count)\n    count = count - 1\n\nprint("انطلق! 🚀")` },
+      { id:"sumloop", title:"جمع الأعداد", tag:"for + sum", desc:"حساب مجموع الأعداد من 1 إلى 10.",
+        code:`total = 0\n\nfor n in range(1, 11):\n    total = total + n\n\nprint("المجموع:", total)` },
+      { id:"evenodd", title:"زوجي أم فردي", tag:"%", desc:"فحص كل عدد في قائمة وتصنيفه.",
+        code:`numbers = [3, 8, 11, 20, 7]\n\nfor n in numbers:\n    if n % 2 == 0:\n        print(n, "زوجي")\n    else:\n        print(n, "فردي")` },
+    ],
+    functions: [
+      { id:"func", title:"دالة ترحيب", tag:"def", desc:"دالة بسيطة تستقبل اسمًا وتعيد جملة ترحيب.",
+        code:`def greet(name):\n    return "أهلًا بك يا " + name\n\nprint(greet("خالد"))` },
+      { id:"funcmax", title:"أكبر رقمين", tag:"def + if", desc:"دالة تقارن بين قيمتين وتعيد الأكبر.",
+        code:`def bigger(a, b):\n    if a > b:\n        return a\n    return b\n\nprint(bigger(12, 27))` },
+      { id:"funcdefault", title:"قيمة افتراضية", tag:"default arg", desc:"دالة بمعامل له قيمة جاهزة إن لم يُحدَّد.",
+        code:`def power(base, exp=2):\n    return base ** exp\n\nprint(power(5))\nprint(power(2, 3))` },
+      { id:"funcloop", title:"دالة بداخلها تكرار", tag:"def + for", desc:"دالة تطبع جدول ضرب لعدد معيّن.",
+        code:`def times_table(n):\n    for i in range(1, 6):\n        print(n, "x", i, "=", n*i)\n\ntimes_table(4)` },
+    ],
+    projects: [
+      { id:"guess", title:"لعبة خمّن الرقم", tag:"random", desc:"البرنامج يختار رقمًا، والمستخدم يحاول تخمينه.",
+        code:`import random\n\nsecret = random.randint(1, 10)\nguess = int(input("خمّن رقمًا من 1 إلى 10: "))\n\nif guess == secret:\n    print("أحسنت! الرقم صحيح ✓")\nelse:\n    print("حاول مجددًا. الرقم كان:", secret)` },
+      { id:"password", title:"مولّد كلمة سر", tag:"random + str", desc:"إنشاء كلمة سر عشوائية بطول يحدّده المستخدم.",
+        code:`import random\nimport string\n\nlength = int(input("طول كلمة السر: "))\nchars = string.ascii_letters + string.digits\n\npassword = ""\nfor i in range(length):\n    password = password + random.choice(chars)\n\nprint("كلمة السر:", password)` },
+      { id:"quiz", title:"اختبار قصير", tag:"مشروع", desc:"سؤالان وحساب النتيجة النهائية تلقائيًا.",
+        code:`score = 0\n\nans1 = input("عاصمة عُمان؟ ")\nif ans1.strip() == "مسقط":\n    score += 1\n\nans2 = input("نتيجة 5 + 7؟ ")\nif ans2.strip() == "12":\n    score += 1\n\nprint("نتيجتك:", score, "من 2")` },
+      { id:"convert", title:"محوّل درجة الحرارة", tag:"معادلة", desc:"تحويل درجة الحرارة من سيليزيوس إلى فهرنهايت.",
+        code:`celsius = float(input("الحرارة بالسيليزيوس: "))\nfahrenheit = (celsius * 9/5) + 32\n\nprint(f"{celsius}°C = {fahrenheit}°F")` },
+    ],
+  };
+
+  const CAT_LABELS = { basics:"الأساسيات", control:"التحكّم", functions:"الدوال", projects:"مشاريع صغيرة" };
+
+  function renderExamplePanels(activeCat){
+    const wrap = document.getElementById('exPanels');
+    wrap.innerHTML = '';
+    const grid = document.createElement('div');
+    grid.className = 'ex-grid';
+    EXAMPLES[activeCat].forEach(ex=>{
+      const card = document.createElement('button');
+      card.className = 'ex-card';
+      card.innerHTML = `
+        <span class="ex-title">${ex.title}<span class="ex-tag">${ex.tag}</span></span>
+        <span class="ex-desc">${ex.desc}</span>
+      `;
+      card.addEventListener('click', ()=>{
+        document.getElementById('codeInput').value = ex.code;
+        document.getElementById('codeInput').focus();
+      });
+      grid.appendChild(card);
+    });
+    wrap.appendChild(grid);
+  }
+
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      renderExamplePanels(btn.dataset.cat);
+    });
+  });
+  renderExamplePanels('basics');
+
+  document.getElementById('clearBtn').addEventListener('click', ()=>{
+    document.getElementById('codeInput').value = '';
+    resetOutput();
+  });
+
+  function resetOutput(){
+    document.getElementById('output').innerHTML = '<div class="out-placeholder">ستظهر نتيجة الكود هنا بعد الضغط على «شغّل الكود» ⬆</div>';
+  }
+
+  // ---------- Pyodide setup ----------
+  let pyodide = null;
+  let pyodideReady = false;
+  const runBtn = document.getElementById('runBtn');
+  const statusBox = document.getElementById('statusBox');
+  const statusText = document.getElementById('statusText');
+
+  function setStatus(state, text){
+    statusBox.classList.remove('ok','busy');
+    if(state) statusBox.classList.add(state);
+    statusText.textContent = text;
+  }
+
+  async function initPyodide(){
+    setStatus('busy', 'يتم تحميل محرّك بايثون...');
+    runBtn.disabled = true;
+    runBtn.textContent = '⏳ يحضّر المحرّك...';
+    try{
+      pyodide = await loadPyodide();
+      pyodideReady = true;
+      setStatus('ok', 'جاهز للتشغيل');
+      runBtn.disabled = false;
+      runBtn.textContent = '▶ شغّل الكود';
+    }catch(e){
+      setStatus(null, 'تعذّر تحميل المحرّك — تحقّق من الاتصال');
+      runBtn.textContent = '⟳ إعادة المحاولة';
+      runBtn.disabled = false;
+    }
+  }
+  initPyodide();
+
+  // ---------- output rendering ----------
+  const outputEl = document.getElementById('output');
+
+  function writeOutput(html){ outputEl.innerHTML = html; }
+  function appendLine(text, cls){
+    const div = document.createElement('div');
+    div.className = 'out-line ' + (cls||'');
+    div.textContent = text;
+    outputEl.appendChild(div);
+    outputEl.scrollTop = outputEl.scrollHeight;
+  }
+
+  // Resolves when the student answers an input() prompt rendered in the output panel.
+
+  function showInputPrompt(promptText){
+    return new Promise((resolve)=>{
+      if(promptText) appendLine(promptText, 'out-ok');
+      const row = document.createElement('div');
+      row.className = 'out-input-row';
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.placeholder = 'اكتب القيمة واضغط Enter أو «إدخال»...';
+      const btn = document.createElement('button');
+      btn.textContent = 'إدخال';
+      const submit = ()=>{
+        const val = input.value;
+        row.remove();
+        appendLine('» ' + val, 'out-ok');
+        resolve(val);
+      };
+      btn.addEventListener('click', submit);
+      input.addEventListener('keydown', (e)=>{ if(e.key==='Enter') submit(); });
+      row.appendChild(input); row.appendChild(btn);
+      outputEl.appendChild(row);
+      outputEl.scrollTop = outputEl.scrollHeight;
+      input.focus();
+    });
+  }
+
+  async function runCode(){
+    if(!pyodideReady){ return; }
+    const rawCode = document.getElementById('codeInput').value;
+    if(!rawCode.trim()){
+      writeOutput('<div class="out-placeholder">اكتب كودًا أولًا قبل التشغيل 🙂</div>');
+      return;
+    }
+    writeOutput('');
+    runBtn.disabled = true;
+    runBtn.textContent = '⏳ يشغّل...';
+    setStatus('busy','يشغّل الكود...');
+
+    pyodide.setStdout({ batched: (s)=> appendLine(s, 'out-ok') });
+    pyodide.setStderr({ batched: (s)=> appendLine(s, 'out-err') });
+
+    // expose a real JS async function callable with `await` from Python
+    window.__py_input = async (promptText)=> await showInputPrompt(promptText || "");
+
+    // Indent the student's code and wrap it in an async function so that
+    // a textual replacement of input( -> await input( becomes valid
+    // top-level await, which Pyodide's runPythonAsync supports natively.
+    const userCode = rawCode.replace(/(?<![\w.])input\s*\(/g, "await input(");
+    const indented = userCode.split("\n").map(line => line.trim() ? "    " + line : "").join("\n");
+
+    const wrapped = `
+import builtins
+from js import __py_input as _js_input
+
+async def input(prompt=""):
+    return await _js_input(str(prompt))
+
+async def __workshop_main():
+${indented}
+
+await __workshop_main()
+`;
+
+    try{
+      await pyodide.runPythonAsync(wrapped);
+      if(!outputEl.textContent.trim()){
+        writeOutput('<div class="out-placeholder">تم التشغيل بنجاح — لا يوجد ناتج مطبوع 👍</div>');
+      }
+    }catch(err){
+      appendLine(String(err), 'out-err');
+    }finally{
+      runBtn.disabled = false;
+      runBtn.textContent = '▶ شغّل الكود';
+      setStatus('ok','جاهز للتشغيل');
+    }
+  }
+
+  runBtn.addEventListener('click', async ()=>{
+    if(!pyodideReady){ await initPyodide(); if(!pyodideReady) return; }
+    runCode();
+  });
+
+  // Ctrl/Cmd + Enter to run
+  document.getElementById('codeInput').addEventListener('keydown', (e)=>{
+    if((e.ctrlKey || e.metaKey) && e.key === 'Enter'){
+      e.preventDefault();
+      runCode();
+    }
+    if(e.key === 'Tab'){
+      e.preventDefault();
+      const el = e.target;
+      const start = el.selectionStart, end = el.selectionEnd;
+      el.value = el.value.substring(0,start) + '    ' + el.value.substring(end);
+      el.selectionStart = el.selectionEnd = start+4;
+    }
+  });
+</script>
+</body>
+</html>
